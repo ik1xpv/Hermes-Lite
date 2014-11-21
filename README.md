@@ -77,7 +77,8 @@ Radio China on 60m
 Here a 80m QSO audio
 [LSB_80m_QSO_HermesLite_ADC.wav](http://www.steila.com/SDR/Hermes_Lite/LSB_80m_QSO_HermesLite_ADC.wav "LSB_80m_QSO_HermesLite_ADC.wav")
 and in a screen shot:
-![80m QSO image](docs\80mQSO.jpg) 
+
+![80m QSO image ](docs/80mQSO.jpg) 
 
 
 ## Note
