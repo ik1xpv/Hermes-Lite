@@ -1,0 +1,7 @@
+Created on:martedì, novembre 11, 2014
+Based on:Hermes_Lite
+Used with Hermes Lite PCB 1.1 
+Pinout modifications:
+- set_location_assignment PIN_P14 -to ad9866_rxclk
+- set_location_assignment PIN_R16 -to AUDIO_R
+- set_location_assignment PIN_N3 -to AUDIO_L

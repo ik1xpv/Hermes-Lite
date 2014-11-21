@@ -24,6 +24,7 @@
 // the Hermes-Lite hardware described at http://github.com/softerhardware/Hermes-Lite.
 // It was forked from Hermes V2.5.
 
+
 module Hermes_Lite(
 
 	input altclk,
@@ -67,8 +68,12 @@ module Hermes_Lite(
   	output PHY_RESET_N,
  
 	inout  PHY_MDIO,               //data line to PHY MDIO
-	output PHY_MDC                //2.5MHz clock to PHY MDIO
+	output PHY_MDC,                //2.5MHz clock to PHY MDIO
   
+  
+	output AUDIO_L,			     // PWM audio output 
+	output AUDIO_R				 // PWM audio output 
+	
 );
 
 
@@ -129,6 +134,11 @@ Hermes_clk_lrclk_gen clrgen (.reset(C122_rst), .CLK_IN(C122_clk), .BCLK(C122_cbc
 
 wire 	IF_locked;
 ifclocks PLL_IF_inst( .inclk0(AD9866clk), .c0(IF_clk), .c1(C122_clk), .c2(_122MHz), .c3(ad9866spiclk), .locked(IF_locked));
+
+//Sigma delta 1st order DACs running at 73.728 MHz --------
+
+DAC_D Audio_pwmL( .clock(_122MHz), .sample(C122_LR_data[31:16]), .data_out(AUDIO_R));
+DAC_D Audio_pwmR( .clock(_122MHz), .sample(C122_LR_data[15:0] ), .data_out(AUDIO_L));
 
 //----------------------------PHY Clocks-------------------
 
@@ -939,6 +949,8 @@ cdc_sync #(32)
 cdc_sync #(32)
 	freq2 (.siga(IF_frequency[2]), .rstb(C122_rst), .clkb(C122_clk), .sigb(C122_frequency_HZ[1])); // transfer Rx2 frequency
 
+cdc_sync #(32)
+	LR_audio (.siga({IF_Left_Data,IF_Right_Data}), .rstb(C122_rst), .clkb(C122_clk), .sigb(C122_LR_data)); // transfer Left and Right audio
 
 cdc_sync #(2)
 	rates (.siga({IF_DFS1,IF_DFS0}), .rstb(C122_rst), .clkb(C122_clk), .sigb({C122_DFS1, C122_DFS0})); // sample rate
@@ -1820,6 +1832,8 @@ assign ad9866data = 16'h00;
 
 // Hack to use IF_DITHER to switch highest bit of attenuation
 assign ad9866_pga = {~IF_DITHER, ~Hermes_atten};
+// Constant gain of 20 dB
+// assign ad9866_pga = 6'h20;
 
 
 //---------------------------------------------------------
@@ -1838,8 +1852,8 @@ assign ad9866_pga = {~IF_DITHER, ~Hermes_atten};
 
 reg   [2:0] IF_PWM_state;      // state for PWM
 reg   [2:0] IF_PWM_state_next; // next state for PWM
-//reg  [15:0] IF_Left_Data;      // Left 16 bit PWM data for D/A converter
-//reg  [15:0] IF_Right_Data;     // Right 16 bit PWM data for D/A converter
+reg  [15:0] IF_Left_Data;      // Left 16 bit PWM data for D/A converter
+reg  [15:0] IF_Right_Data;     // Right 16 bit PWM data for D/A converter
 reg  [15:0] IF_I_PWM;          // I 16 bit PWM data for D/A conveter
 reg  [15:0] IF_Q_PWM;          // Q 16 bit PWM data for D/A conveter
 wire        IF_get_samples;
@@ -1862,12 +1876,12 @@ begin
     IF_PWM_state   <= #IF_TPD IF_PWM_state_next;
 
   // get Left audio
-//  if (IF_PWM_state == PWM_LEFT)
-//    IF_Left_Data   <= #IF_TPD IF_Rx_fifo_rdata;
+  if (IF_PWM_state == PWM_LEFT)
+    IF_Left_Data   <= #IF_TPD IF_Rx_fifo_rdata;
 
   // get Right audio
-//  if (IF_PWM_state == PWM_RIGHT)
-//    IF_Right_Data  <= #IF_TPD IF_Rx_fifo_rdata;
+  if (IF_PWM_state == PWM_RIGHT)
+    IF_Right_Data  <= #IF_TPD IF_Rx_fifo_rdata;
 
   // get I audio
   if (IF_PWM_state == PWM_I_AUDIO)
