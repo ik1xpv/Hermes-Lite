@@ -65,7 +65,7 @@ Hereafter the rc filtering:
 ![Simple_DAC1](docs/Simple_DAC2.jpg)
 
 
-## How it sound ?
+## How it sounds ?
 
 Some .wav recording has been made using a 2nd PC running Audacity.
 
