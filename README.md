@@ -87,3 +87,29 @@ The audio seems good enough for use as receiving audio.
 Now a microphone ADC solution is required. Nevertheless it is difficult to find a simple solution for the ADC converter. Assuming to sample the microphone signal at 73.728 MHz it will generate a high speed stream data that requires a lot of rtl to be decimated to the 48KHz required one.
 
 Possibly the external CODEC board solution is more effective.
+
+
+# HLA (Hermes Lite Audio) board v1.0
+
+A separate pcb module housing a TLV320AIC32B codec has been designed. It is a clone of the Hermes design and can be wired to gpios of Hermes Lite pcb ( I used it with the [PCB v1.1](https://github.com/frohro/Hermes-Lite) by Rob Frohne KL7NA, [wiki](https://github.com/frohro/Hermes-Lite/wiki/Circuit-Boards) ).
+Depending on different pcb some gpio re-assignment may be required.
+
+The schematic and PCB has been designed using Altium cad. Here you can find the [scheme and pcb layout](https://github.com/ik1xpv/Hermes-Lite/audio/pcb/HLAudioboard_v1.0.pdf), here the pcb [gerber files](https://github.com/ik1xpv/Hermes-Lite/audio/pcb/HLA1_0_gerberfiles.ZIP).
+
+![pcb unpopulated](audio/HLA10_002.JPG)
+
+BUG01 v1.0: the HPHONES and LINEIN bottom silkscreen are swapped.
+
+![pcb cabling](audio/HLA10_003.JPG)
+
+![audio io](audio/HLA10_001.JPG)
+
+The RTL code with the pinout for PCB1.1 is here. The PHONES output and the Microphone input run fine. LINEIN has not jet been used.
+
+It runs with PowerSDR both in rx (1 or 2) and tx, and with CuSDR64 in rx (1|2) in Win7.
+
+
+
+
+
+

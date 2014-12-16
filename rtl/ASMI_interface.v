@@ -38,7 +38,7 @@ input 	wire 	[9:0]IF_Rx_used;
 input  	wire  	erase_done_ACK;
 input  	wire	send_more_ACK;
 input   wire	[7:0]IF_PHY_data;
-input   wire    [13:0]num_blocks;
+input   wire   [13:0]num_blocks;
 
 output 	wire	busy;
 output 	reg 	rdreq;

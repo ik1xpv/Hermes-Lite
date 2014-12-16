@@ -25,6 +25,9 @@
 // It was forked from Hermes V2.5.
 
 
+// The interface to TLV320AIC23B audio codec has been activated.
+// (C) Oscar Steila IK1XPV
+
 module Hermes_Lite(
 
 	input altclk,
@@ -69,21 +72,32 @@ module Hermes_Lite(
  
 	inout  PHY_MDIO,               //data line to PHY MDIO
 	output PHY_MDC,                //2.5MHz clock to PHY MDIO
-  
-  
-	output AUDIO_L,			     // PWM audio output 
-	output AUDIO_R				 // PWM audio output 
+   
+	output RESET_EXP,              // RESET output activated
+	input  PTT,							 // weak pull up activated
 	
+//  audio codec (TLV320AIC23B) interface uses 8 IO pins
+
+	output CBCLK,  					 // - 73728000/48000/64 = 3072000 Hz
+	output CLRCIO,	                // - CLRCIN // CLRCOUT
+	output CDIN,                   // data to TLV320
+	output CMCLK,                  // Master Clock to TLV320 
+	output nCS,                    // chip select on TLV320
+	output MOSI,                   // SPI data for TLV320		
+	output SSCK,                   // SPI clock for TLV320
+	input  CDOUT                   // Mic data from TLV320  
+	
+
 );
 
 
-wire NCONFIG;
+// wire NCONFIG;
 
 wire FPGA_PTT;
 wire RAND;
 assign RAND = 0;
 
-assign NCONFIG = IP_write_done || reset_FPGA;
+// assign NCONFIG = IP_write_done || reset_FPGA;
 
 parameter M_TPD   = 4;
 parameter IF_TPD  = 2;
@@ -109,6 +123,9 @@ assign IF_rst 	 = (!IF_locked || reset);		// hold code in reset until PLLs are l
 
 assign PHY_RESET_N = 1'b1;  						// Allow PYH to run for now
 
+assign RESET_EXP  = (!reset);						// AD9866 reset_exp#
+
+
 // transfer IF_rst to 122.88MHz clock domain to generate C122_rst
 cdc_sync #(1)
 	reset_C122 (.siga(IF_rst), .rstb(IF_rst), .clkb(C122_clk), .sigb(C122_rst)); // 122.88MHz clock domain reset
@@ -119,7 +136,7 @@ cdc_sync #(1)
 
 //wire C122_clk = LTC2208_122MHz;
 wire C122_clk; //  = AD9866clk;
-wire _122MHz;  // = AD9866clk;
+wire _122MHz;  //  = AD9866clk;
 wire ad9866spiclk;
 
 wire IF_clk;
@@ -130,15 +147,17 @@ Hermes_clk_lrclk_gen clrgen (.reset(C122_rst), .CLK_IN(C122_clk), .BCLK(C122_cbc
                              .Brise(C122_cbrise), .Bfall(C122_cbfall), .LRCLK(CLRCLK));
 
 
-
+assign CBCLK   = C122_cbclk;  // 3072000 Hz
+assign CLRCIO  = CLRCLK;		//	 960000 Hz 		  
+									  
 
 wire 	IF_locked;
 ifclocks PLL_IF_inst( .inclk0(AD9866clk), .c0(IF_clk), .c1(C122_clk), .c2(_122MHz), .c3(ad9866spiclk), .locked(IF_locked));
 
-//Sigma delta 1st order DACs running at 73.728 MHz --------
-
-DAC_D Audio_pwmL( .clock(_122MHz), .sample(C122_LR_data[31:16]), .data_out(AUDIO_R));
-DAC_D Audio_pwmR( .clock(_122MHz), .sample(C122_LR_data[15:0] ), .data_out(AUDIO_L));
+// generate TLV320AIC23B clk  23.9616/2 = 11.9808 MHz
+reg clock_TLV;
+always @ (posedge ad9866spiclk) clock_TLV <= ~clock_TLV; 
+assign CMCLK = clock_TLV;
 
 //----------------------------PHY Clocks-------------------
 
@@ -490,6 +509,11 @@ wire time_out;
 wire DHCP_request;
 
 DHCP DHCP_inst(Tx_clock_2, (DHCP_start || DHCP_discover_broadcast), DHCP_renew, DHCP_discover , DHCP_offer, time_out, DHCP_request, DHCP_ACK);
+//---------------------------------------------------------
+// 		Set up TLV320 using SPI 
+//---------------------------------------------------------
+
+TLV320_SPI TLV (.clk(CMCLK), .nCS(nCS), .MOSI(MOSI), .SSCK(SSCK), .boost(IF_Mic_boost), .line(IF_Line_In), .line_in_gain(IF_Line_In_Gain));
 
 
 //-----------------------------------------------------
@@ -788,14 +812,14 @@ wire erase_done_ACK;
 wire send_more_ACK;
 wire reset_FPGA;
 
+
 ASMI_interface  ASMI_int_inst(.clock(Tx_clock), .busy(busy), .erase(erase), .erase_ACK(erase_ACK), .IF_PHY_data(EPCS_data),
 							 .IF_Rx_used(EPCS_Rx_used), .rdreq(EPCS_rdreq), .erase_done(erase_done), .num_blocks(num_blocks),
 							 .erase_done_ACK(erase_done_ACK), .send_more(send_more), .send_more_ACK(send_more_ACK), .NCONFIG(reset_FPGA)); 
 
 
-
       
-assign IF_mic_Data = 0;
+// assign IF_mic_Data = 16'h0;
 
 
 
@@ -830,6 +854,37 @@ assign ad9866_txclk = C122_clk;
 //end
 
 
+
+//---------------------------------------------------------
+//		Send L/R audio to TLV320 in I2S format
+//---------------------------------------------------------
+             
+I2S_xmit #(.DATA_BITS(32))  // CLRCLK running at 48KHz
+  LR (.rst(C122_rst), .lrclk(CLRCLK), .clk(C122_clk), .CBrise(C122_cbrise),
+      .CBfall(C122_cbfall), .sample(C122_LR_data), .outbit(CDIN));
+
+      
+//----------------------------------------------------------------------------
+//		Get mic data from  TLV320 in I2S format and transfer to IF_clk domain
+//---------------------------------------------------------------------------- 
+
+wire [31:0] C122_mic_LR;
+wire        C122_mic_rdy;
+reg  [15:0] C122_mic_data;
+      
+// Get I2S CDOUT mic data from TLV320.  NOTE: only 16 bits used
+I2S_rcv #(32,2,1) // WARNING: values 2,1 may need adjusting for best capture of data
+    MIC (.xrst(C122_rst), .xclk(C122_clk), .BCLK(CBCLK), .LRCLK(CLRCLK), .din(CDOUT),.xData(C122_mic_LR),.xData_rdy(C122_mic_rdy));
+    
+always @(posedge C122_clk)
+begin
+  if (C122_mic_rdy) // this happens before LRfall
+    C122_mic_data <= C122_mic_LR[31:16]; // we're only using the Left data
+end
+    
+// transfer mic data into the IF_clk domain
+cdc_sync #(16)
+	cdc_mic (.siga(C122_mic_data), .rstb(IF_rst), .clkb(IF_clk), .sigb(IF_mic_Data)); 
 
 
 

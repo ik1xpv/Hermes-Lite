@@ -27,7 +27,7 @@ set_global_assignment -name DEVICE EP4CE22F17C7
 set_global_assignment -name FAMILY "Cyclone IV E"
 set_global_assignment -name TOP_LEVEL_ENTITY Hermes_Lite
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 14.0
-set_global_assignment -name PROJECT_CREATION_TIME_DATE "22:38:54  SEPTEMBER 10, 2014"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "10:28:48  DECEMBER 07, 2014"
 set_global_assignment -name LAST_QUARTUS_VERSION 14.0
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
@@ -93,6 +93,7 @@ set_location_assignment PIN_K5 -to leds[1]
 set_location_assignment PIN_N15 -to leds[0]
 set_location_assignment PIN_K15 -to ad9866_sclk
 set_location_assignment PIN_T7 -to ad9866_sdio
+set_location_assignment PIN_J14 -to ad9866_sdo
 set_location_assignment PIN_M10 -to ad9866_sen_n
 set_location_assignment PIN_K2 -to altclk
 set_global_assignment -name RESERVE_DATA0_AFTER_CONFIGURATION "USE AS REGULAR IO"
@@ -105,7 +106,19 @@ set_location_assignment PIN_R1 -to ad9866_pga[3]
 set_location_assignment PIN_N6 -to ad9866_pga[2]
 set_location_assignment PIN_P2 -to ad9866_pga[1]
 set_location_assignment PIN_M8 -to ad9866_pga[0]
-set_location_assignment PIN_P11 -to ad9866_rxclk
+set_location_assignment PIN_P14 -to ad9866_rxclk
+set_location_assignment PIN_J13 -to ad9866_adio[11]
+set_location_assignment PIN_F2 -to ad9866_adio[10]
+set_location_assignment PIN_L16 -to ad9866_adio[9]
+set_location_assignment PIN_F1 -to ad9866_adio[8]
+set_location_assignment PIN_N14 -to ad9866_adio[7]
+set_location_assignment PIN_G1 -to ad9866_adio[6]
+set_location_assignment PIN_G2 -to ad9866_adio[5]
+set_location_assignment PIN_T10 -to ad9866_adio[4]
+set_location_assignment PIN_J1 -to ad9866_adio[3]
+set_location_assignment PIN_L3 -to ad9866_adio[2]
+set_location_assignment PIN_L4 -to ad9866_adio[1]
+set_location_assignment PIN_N1 -to ad9866_adio[0]
 set_location_assignment PIN_P3 -to ad9866_rxen
 set_location_assignment PIN_L2 -to ad9866_txclk
 set_location_assignment PIN_P16 -to ad9866_txen
@@ -121,9 +134,23 @@ set_instance_assignment -name CLOCK_SETTINGS CLRCIN -to CLRCIN
 set_instance_assignment -name CLOCK_SETTINGS CLRCOUT -to CLRCOUT
 set_instance_assignment -name CLOCK_SETTINGS TLV2208_125Mhz -to LTC2208_125Mhz
 set_instance_assignment -name CLOCK_SETTINGS OSC_10MHz -to OSC_10MHZ
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to PHY_CLK125
-set_global_assignment -name SDC_FILE Hermes_Lite_NoAD9866.sdc
-set_global_assignment -name VERILOG_FILE Hermes_Lite_NoAD9866.v
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY build_test_codecaudio
+set_location_assignment PIN_L1 -to PTT
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to PTT
+set_location_assignment PIN_R16 -to CBCLK
+set_location_assignment PIN_N3 -to CDIN
+set_location_assignment PIN_N2 -to CDOUT
+set_location_assignment PIN_J2 -to CLRCIO
+set_location_assignment PIN_T11 -to CMCLK
+set_location_assignment PIN_N11 -to MOSI
+set_location_assignment PIN_N12 -to nCS
+set_location_assignment PIN_L14 -to SSCK
+set_location_assignment PIN_T3 -to RESET_EXP
+set_global_assignment -name VERILOG_FILE Hermes_Lite.v
+set_global_assignment -name VERILOG_FILE I2S_xmit.v
+set_global_assignment -name VERILOG_FILE I2S_rcv.v
+set_global_assignment -name VERILOG_FILE TLV320_SPI.v
+set_global_assignment -name SDC_FILE Hermes_Lite.sdc
 set_global_assignment -name VERILOG_FILE myhdl/ad9866.v
 set_global_assignment -name VERILOG_FILE Polyphase_FIR/firfilt.v
 set_global_assignment -name VERILOG_FILE Polyphase_FIR/CicInterpM5.v
@@ -181,11 +208,13 @@ set_global_assignment -name QIP_FILE SP_fifo.qip
 set_global_assignment -name QIP_FILE PHY_fifo.qip
 set_global_assignment -name QIP_FILE ethclocks.qip
 set_global_assignment -name VERILOG_FILE ethclocks.v
+set_global_assignment -name QIP_FILE ifclocks.qip
+set_global_assignment -name VERILOG_FILE ifclocks.v
 set_global_assignment -name QIP_FILE ASMI.qip
 set_global_assignment -name QIP_FILE EPCS_fifo.qip
 set_global_assignment -name QIP_FILE Tx_fifo.qip
 set_global_assignment -name QIP_FILE PHY_Rx_fifo.qip
-set_global_assignment -name PROJECT_OUTPUT_DIRECTORY build_NoAD9866_09SDK
-set_global_assignment -name QIP_FILE testclocks.qip
-set_global_assignment -name VERILOG_FILE testclocks.v
+set_global_assignment -name CDF_FILE Chain1.cdf
+set_global_assignment -name SOURCE_FILE db/Hermes_Lite_codecaudio.cmp.rdb
+set_global_assignment -name VERILOG_FILE Hermes_Lite_codecaudio.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
