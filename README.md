@@ -9,16 +9,16 @@ A Fork from
 [Hermes-Lite description](https://github.com/softerhardware/Hermes-Lite/blob/master/README.md)
 
 
-
 ## Quick Links
 
- * [Google Groups](https://groups.google.com/forum/#!forum/hermes-lite) discussion forum.
- * [Hardware](https://github.com/softerhardware/Hermes-Lite/blob/master/pcb/README.md)
-  * Hermes-Lite [schematic](https://github.com/softerhardware/Hermes-Lite/blob/master/pcb/hermeslite.pdf), [BOM](https://github.com/softerhardware/Hermes-Lite/blob/master/pcb/bom.xls) and [PCB](https://oshpark.com/shared_projects/WHfDeB2c).
-  * Basic RF front end [schematic](https://github.com/softerhardware/Hermes-Lite/blob/master/frontend/basic/frontend.pdf), [BOM](https://github.com/softerhardware/Hermes-Lite/blob/master/frontend/basic/bom.xls) and [PCB](https://oshpark.com/shared_projects/K5UywZWT).
- * [RTL](https://github.com/softerhardware/Hermes-Lite/tree/master/rtl/README.md)
+* [Google Groups](https://groups.google.com/forum/#!forum/hermes-lite) discussion forum.
+ 
 
+ branches:
 
+ * [master](https://github.com/ik1xpv/) Direct Audio Out.
+
+ * [audiocodec_1](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1) HLA pcb module with TLV320AIC23B codec.
 
 
 
@@ -94,7 +94,7 @@ Possibly the external CODEC board solution is more effective.
 A separate pcb module housing a TLV320AIC32B codec has been designed. It is a clone of the Hermes design and can be wired to gpios of Hermes Lite pcb ( I used it with the [PCB v1.1](https://github.com/frohro/Hermes-Lite) by Rob Frohne KL7NA, [wiki](https://github.com/frohro/Hermes-Lite/wiki/Circuit-Boards) ).
 Depending on different pcb some gpio re-assignment may be required.
 
-The schematic and PCB has been designed using Altium cad. Here you can find the [scheme and pcb layout](https://github.com/ik1xpv/Hermes-Lite/audio/pcb/HLAudioboard_v1.0.pdf), here the pcb [gerber files](https://github.com/ik1xpv/Hermes-Lite/audio/pcb/HLA1_0_gerberfiles.ZIP).
+The schematic and PCB has been designed using Altium cad. [Here](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb) you can find the [scheme and pcb layout](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb/HLAudioboard_v1.0.pdf), here the pcb [gerber files](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcbHLA1_0_gerberfiles.ZIP).
 
 ![pcb unpopulated](audio/HLA10_002.JPG)
 
@@ -104,7 +104,7 @@ BUG01 v1.0: the HPHONES and LINEIN bottom silkscreen are swapped.
 
 ![audio io](audio/HLA10_001.JPG)
 
-The RTL code with the pinout for PCB1.1 is in branch Audiocodec_1. The PHONES output and the Microphone input run fine. LINEIN has not jet been used.
+The RTL code with the pinout for PCB1.1 is in branch [Audiocodec_1](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1). The PHONES output and the Microphone input run fine. LINEIN has not jet been used.
 
 It runs with PowerSDR both in rx (1 or 2) and tx, and with CuSDR64 in rx (1|2) in Win7.
 
