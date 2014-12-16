@@ -94,7 +94,7 @@ Possibly the external CODEC board solution is more effective.
 A separate pcb module housing a TLV320AIC32B codec has been designed. It is a clone of the Hermes design and can be wired to gpios of Hermes Lite pcb ( I used it with the [PCB v1.1](https://github.com/frohro/Hermes-Lite) by Rob Frohne KL7NA, [wiki](https://github.com/frohro/Hermes-Lite/wiki/Circuit-Boards) ).
 Depending on different pcb some gpio re-assignment may be required.
 
-The schematic and PCB has been designed using Altium cad. [Here](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb) you can find the [scheme and pcb layout](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb/HLAudioboard_v1.0.pdf), here the pcb [gerber files](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcbHLA1_0_gerberfiles.ZIP).
+The schematic and PCB has been designed using Altium cad. [Here](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb) you can find the [scheme and pcb layout](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb/HLAudioboard_v1.0.pdf), here the pcb [gerber files](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1/audio/pcb/HLA1_0_gerberfiles.ZIP).
 
 ![pcb unpopulated](audio/HLA10_002.JPG)
 
