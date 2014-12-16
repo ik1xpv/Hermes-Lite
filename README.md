@@ -104,7 +104,7 @@ BUG01 v1.0: the HPHONES and LINEIN bottom silkscreen are swapped.
 
 ![audio io](audio/HLA10_001.JPG)
 
-The RTL code with the pinout for PCB1.1 is in branch [Audiocodec_1](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1). The PHONES output and the Microphone input run fine. LINEIN has not jet been used.
+The RTL code with the pinout for PCB1.1 is in branch [Audiocodec_1](https://github.com/ik1xpv/Hermes-Lite/tree/audiocodec_1). The PHONES output and the Microphone input run fine. LINEIN has not yet been used.
 
 It runs with PowerSDR both in rx (1 or 2) and tx, and with CuSDR64 in rx (1|2) in Win7.
 
